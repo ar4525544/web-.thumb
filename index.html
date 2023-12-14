@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>YouTube Thumbnail Downloader</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <h1>YouTube Thumbnail Downloader</h1>
+  
+  <input type="text" id="videoLink" placeholder="Enter YouTube Video URL" required>
+  <button onclick="downloadThumbnails()">Download Thumbnails</button>
+  <div id="thumbnailOptions"></div>
+
+  <script>
+    function downloadThumbnails() {
+      var videoLink = document.getElementById("videoLink").value;
+      var videoId = getYouTubeId(videoLink);
+      var thumbnailOptions = document.getElementById("thumbnailOptions");
+
+      if (videoId !== "") {
+        thumbnailOptions.innerHTML = ""; // Clear previous results
+
+        // Thumbnail URLs for different sizes
+        var thumbnailSizes = [
+          { name: "Full HD", size: "maxresdefault" },
+          { name: "Medium", size: "mqdefault" },
+          { name: "Small", size: "default" }
+        ];
+
+        thumbnailSizes.forEach(function (size) {
+          var thumbnailUrl = "https://img.youtube.com/vi/" + videoId + "/" + size.size + ".jpg";
+
+          // Creating thumbnail image elements
+          var thumbnailImg = document.createElement("img");
+          thumbnailImg.src = thumbnailUrl;
+          thumbnailImg.alt = "YouTube Thumbnail - " + size.name;
+          thumbnailImg.style.maxWidth = "200px"; // Adjust image size for display
+
+          // Creating download links for each thumbnail size
+          var downloadLink = document.createElement("a");
+          downloadLink.href = thumbnailUrl;
+          downloadLink.textContent = "Download " + size.name + " Thumbnail";
+          downloadLink.download = "youtube_thumbnail_" + size.size + ".jpg";
+          downloadLink.style.display = "block"; // Place download links on new lines
+
+          // Appending thumbnail images and download links to the options div
+          thumbnailOptions.appendChild(thumbnailImg);
+          thumbnailOptions.appendChild(document.createElement("br"));
+          thumbnailOptions.appendChild(downloadLink);
+          thumbnailOptions.appendChild(document.createElement("br"));
+        });
+      } else {
+        thumbnailOptions.innerHTML = "Please enter a valid YouTube video URL.";
+      }
+    }
+
+    function getYouTubeId(url) {
+      var videoId = "";
+      if (url.includes("youtube.com/watch?v=")) {
+        videoId = url.split("v=")[1].split("&")[0];
+      } else if (url.includes("youtu.be/")) {
+        videoId = url.split("youtu.be/")[1].split("?")[0];
+      }
+      return videoId;
+    }
+  </script>
+
+</body>
+</html>
